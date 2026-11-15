@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcomStore &mdash; Developer API Client</title>
+    <!-- Google Fonts for crisp typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent-success: #059669;
+            --accent-danger: #dc2626;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            background: var(--text-main);
+            color: white;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        select, button, input {
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+
+        .mode-toggle {
+            display: flex;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.2rem;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.35rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.15s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--card-bg);
+            color: var(--text-main);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: background 0.15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-color);
+        }
+
+        .cart-btn {
+            background: var(--text-main);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .cart-btn:hover {
+            background: #334155;
+        }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+        }
+
+        main {
+            flex: 1;
+            padding: 2.5rem 0;
+        }
+
+        .banner {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .banner.hidden {
+            display: none;
+        }
+
+        .catalog-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media(min-width: 640px) {
+            .catalog-header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.65rem 0.75rem 0.65rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--card-bg);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .stock-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .stock-badge.in-stock {
+            background: #ecfdf5;
+            color: var(--accent-success);
+        }
+
+        .stock-badge.out-stock {
+            background: #fef2f2;
+            color: var(--accent-danger);
+        }
+
+        .product-id {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 1.25rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.65rem 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.15s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Slide-over Cart Drawer */
+        .drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .drawer-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            z-index: 51;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            transform: translateX(100%);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .drawer-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-color);
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--bg-color);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            padding: 0.2rem;
+        }
+
+        .qty-btn {
+            background: none;
+            border: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .qty-btn:hover {
+            color: var(--text-main);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .payload-preview {
+            background: #0f172a;
+            color: #38bdf8;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            max-height: 120px;
+            margin-top: 0.5rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--card-bg);
+            padding: 1.5rem 0;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-inner">
+            <a href="#" class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-cube"></i></div>
+                <span>EcomStore API</span>
+            </a>
+
+            <div class="nav-controls">
+                <div class="mode-toggle">
+                    <button id="modeApiBtn" class="mode-btn active" onclick="setMode('api')">Live API</button>
+                    <button id="modeMockBtn" class="mode-btn" onclick="setMode('mock')">Mock Data</button>
+                </div>
+
+                <button class="icon-btn" onclick="fetchProducts()" title="Refresh Catalog">
+                    <i id="refreshIcon" class="fa-solid fa-rotate-right"></i>
+                </button>
+
+                <!-- Admin Dashboard Trigger (Visible only if logged-in user is admin) -->
+                <button id="adminNavBtn" onclick="openAdminModal()" class="mode-btn hidden" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-weight: 600; padding: 0.4rem 0.75rem; border-radius: 0.5rem;">
+                    <i class="fa-solid fa-shield-halved" style="margin-right: 0.25rem;"></i> Admin Panel
+                </button>
+
+                <!-- Auth Controls -->
+                <div id="authNavControls" style="display: flex; align-items: center;">
+                    <button id="authOpenBtn" onclick="openAuthModal('login')" class="mode-btn" style="border: 1px solid var(--border-color); padding: 0.4rem 0.75rem; border-radius: 0.5rem; font-weight: 600;">
+                        <i class="fa-solid fa-user" style="margin-right: 0.25rem;"></i> Sign In
+                    </button>
+                    <div id="userProfileDisplay" class="hidden" style="align-items: center; gap: 0.5rem;">
+                        <span id="userWelcomeText" style="font-size: 0.8125rem; font-weight: 600; color: var(--text-main);"></span>
+                        <button class="icon-btn" onclick="logout()" title="Sign Out" style="width: 2rem; height: 2rem;"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                </div>
+
+                <button class="cart-btn" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>Bag</span>
+                    <span id="cartCountBadge" class="badge">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Status Notification Banner -->
+        <div id="statusBanner" class="banner hidden">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <i id="statusIcon" class="fa-solid fa-circle-info"></i>
+                <span id="statusMessage" style="font-weight: 500; font-size: 0.875rem;"></span>
+            </div>
+            <button onclick="dismissBanner()" style="background: none; border: none; cursor: pointer; color: inherit;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="catalog-header">
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 700; letter-spacing: -0.025em;">Product Catalog</h1>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Browse available items synced directly with PostgreSQL backend.</p>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search catalog..." oninput="applyFilters()">
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="productGrid" class="product-grid">
+            <!-- Populated dynamically -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            Connected Source: <span id="footerConnectionMode" style="font-weight: 600; color: var(--text-main);">Live API (http://localhost:8080)</span>
+        </div>
+    </footer>
+
+    <!-- Cart Slide-over Drawer -->
+    <div id="drawerBackdrop" class="drawer-backdrop" onclick="toggleCart(false)"></div>
+    <aside id="cartDrawer" class="cart-drawer">
+        <div class="drawer-header">
+            <h3 style="font-weight: 700; font-size: 1.125rem;">Shopping Bag</h3>
+            <button class="icon-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="cartItemsContainer" class="drawer-body">
+            <!-- Cart items populated dynamically -->
+        </div>
+        <div class="drawer-footer">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-weight: 600;">
+                <span>Subtotal</span>
+                <span id="cartSubtotal">$0.00</span>
+            </div>
+            <button id="checkoutBtn" class="btn-primary" onclick="openCheckoutModal()" disabled>Proceed to Checkout</button>
+        </div>
+    </aside>
+
+    <!-- Authentication Modal (Login / Register) -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="authModalTitle" style="font-weight: 700;">Sign In to Your Account</h3>
+                <button class="icon-btn" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; background: var(--bg-color); padding: 0.25rem; border-radius: 0.5rem;">
+                    <button id="loginTabBtn" class="mode-btn active" style="flex:1;" onclick="switchAuthTab('login')">Sign In</button>
+                    <button id="registerTabBtn" class="mode-btn" style="flex:1;" onclick="switchAuthTab('register')">Register</button>
+                </div>
+
+                <p id="authError" class="hidden" style="color: var(--accent-danger); font-size: 0.8125rem; margin-bottom: 1rem;"></p>
+
+                <form id="authForm" onsubmit="handleAuthSubmit(event)" autocomplete="off">
+                    <div id="nameFieldGroup" class="form-group hidden">
+                        <label class="form-label" for="authName">Full Name</label>
+                        <input type="text" id="authName" class="form-input" placeholder="Alex Flores" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="authEmail">Email Address</label>
+                        <input type="email" id="authEmail" class="form-input" placeholder="alex@ecom.com" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="authPassword">Password</label>
+                        <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required autocomplete="new-password">
+                    </div>
+
+                    <button type="submit" id="authSubmitBtn" class="btn-primary" style="margin-top: 1.5rem;">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Product Management Modal -->
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3 style="font-weight: 700;"><i class="fa-solid fa-shield-halved" style="color: var(--primary); margin-right: 0.5rem;"></i> Admin Product Management</h3>
+                <button class="icon-btn" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
+                <!-- Tab switcher inside modal -->
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: var(--bg-color); padding: 0.25rem; border-radius: 0.5rem;">
+                    <button id="adminTabCreate" class="mode-btn active" style="flex:1;" onclick="switchAdminTab('create')">Add New Product</button>
+                    <button id="adminTabStock" class="mode-btn" style="flex:1;" onclick="loadLowStockProducts()">Low Stock Alerts</button>
+                </div>
+
+                <!-- Create Product Form -->
+                <form id="createProductForm" onsubmit="handleCreateProduct(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="newProdName">Product Name</label>
+                        <input type="text" id="newProdName" class="form-input" placeholder="Wireless Mechanical Keyboard" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newProdDesc">Description</label>
+                        <input type="text" id="newProdDesc" class="form-input" placeholder="Hot-swappable switches...">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="newProdCategory">Category</label>
+                            <input type="text" id="newProdCategory" class="form-input" value="Peripherals">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="newProdPrice">Price (in cents)</label>
+                            <input type="number" id="newProdPrice" class="form-input" value="9999" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newProdQty">Initial Quantity (Inventory)</label>
+                        <input type="number" id="newProdQty" class="form-input" value="10" min="0" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Create Product</button>
+                </form>
+
+                <!-- Low Stock Container (Hidden by default) -->
+                <div id="lowStockContainer" class="hidden" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <p style="font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 0.5rem;">Products with inventory level &le; 5:</p>
+                    <div id="lowStockList" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 style="font-weight: 700;">Complete Order</h3>
+                <button class="icon-btn" onclick="closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm" onsubmit="submitOrder(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="customerIdInput">Customer ID</label>
+                        <input type="number" id="customerIdInput" class="form-input" value="1" min="1" required oninput="updatePayloadPreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Payload Preview (POST /order)</label>
+                        <pre id="payloadPreview" class="payload-preview">{}</pre>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button type="button" class="mode-btn" style="border: 1px solid var(--border-color); padding: 0.65rem 1rem;" onclick="closeCheckoutModal()">Cancel</button>
+                        <button type="submit" id="submitOrderBtn" class="btn-primary" style="width: auto; padding: 0.65rem 1.25rem;">Submit Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-card" style="text-align: center; padding: 2rem;">
+            <div style="width: 3rem; height: 3rem; background: #ecfdf5; color: var(--accent-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.25rem;">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Order Successful</h3>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Your transaction has been committed successfully.</p>
+
+            <div style="background: var(--bg-color); padding: 1rem; border-radius: 0.5rem; text-align: left; margin-bottom: 1.5rem; font-size: 0.875rem;">
+                <div><strong>Order ID:</strong> <span id="successOrderId">#---</span></div>
+                <div><strong>Timestamp:</strong> <span id="successOrderTime">---</span></div>
+            </div>
+
+            <button class="btn-primary" onclick="closeSuccessModal()">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        const API_BASE = 'http://localhost:8080';
+        let currentMode = 'api';
+        let products = [];
+        let cart = [];
+
+        // Auth State Management
+        let authToken = localStorage.getItem('ecom_token') || null;
+        let currentUser = JSON.parse(localStorage.getItem('ecom_user')) || null;
+        let authMode = 'login'; // 'login' or 'register'
+
+        const MOCK_PRODUCTS = [
+            { id: 1, name: "Mechanical Gaming Keyboard", price_in_cents: 8999, quantity: 15 },
+            { id: 2, name: "Ergonomic Wireless Mouse", price_in_cents: 4999, quantity: 8 },
+            { id: 3, name: "Ultra-Wide Monitor 34\"", price_in_cents: 44900, quantity: 4 },
+            { id: 4, name: "Noise Cancelling Headphones", price_in_cents: 19999, quantity: 0 }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchProducts();
+            updateCartUI();
+            updateAuthUI();
+        });
+
+        // --- Helper: Decode JWT Payload ---
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // --- Authentication UI & Logic ---
+        function resetAuthForm() {
+            document.getElementById('authName').value = '';
+            document.getElementById('authEmail').value = '';
+            document.getElementById('authPassword').value = '';
+            document.getElementById('authError').classList.add('hidden');
+        }
+
+        function updateAuthUI() {
+            const authOpenBtn = document.getElementById('authOpenBtn');
+            const userProfileDisplay = document.getElementById('userProfileDisplay');
+            const userWelcomeText = document.getElementById('userWelcomeText');
+            const adminNavBtn = document.getElementById('adminNavBtn');
+
+            if (currentUser) {
+                authOpenBtn.classList.add('hidden');
+                userProfileDisplay.classList.remove('hidden');
+                userProfileDisplay.style.display = 'flex';
+                userWelcomeText.textContent = `Hi, ${currentUser.name} (${currentUser.role})`;
+
+                // Show Admin Panel button if user role is admin
+                if (currentUser.role === 'admin') {
+                    adminNavBtn.classList.remove('hidden');
+                } else {
+                    adminNavBtn.classList.add('hidden');
+                }
+
+                const customerIdInput = document.getElementById('customerIdInput');
+                if (customerIdInput && currentUser.id) {
+                    customerIdInput.value = currentUser.id;
+                }
+            } else {
+                authOpenBtn.classList.remove('hidden');
+                userProfileDisplay.classList.add('hidden');
+                adminNavBtn.classList.add('hidden');
+            }
+        }
+
+        function openAuthModal(mode) {
+            switchAuthTab(mode);
+            document.getElementById('authModal').classList.add('open');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('open');
+            resetAuthForm();
+        }
+
+        function switchAuthTab(mode) {
+            authMode = mode;
+            resetAuthForm();
+
+            const title = document.getElementById('authModalTitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const nameGroup = document.getElementById('nameFieldGroup');
+            const loginTab = document.getElementById('loginTabBtn');
+            const registerTab = document.getElementById('registerTabBtn');
+
+            if (mode === 'login') {
+                title.textContent = 'Sign In to Your Account';
+                submitBtn.textContent = 'Sign In';
+                nameGroup.classList.add('hidden');
+                loginTab.className = 'mode-btn active';
+                registerTab.className = 'mode-btn';
+            } else {
+                title.textContent = 'Create an Account';
+                submitBtn.textContent = 'Register Account';
+                nameGroup.classList.remove('hidden');
+                loginTab.className = 'mode-btn';
+                registerTab.className = 'mode-btn active';
+            }
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const name = document.getElementById('authName').value;
+            const errorEl = document.getElementById('authError');
+            errorEl.classList.add('hidden');
+
+            try {
+                if (authMode === 'register') {
+                    const regRes = await fetch(`${API_BASE}/auth/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, password, role: 'customer' })
+                    });
+                    if (!regRes.ok) {
+                        const err = await regRes.json();
+                        throw new Error(err.detail || 'Registration failed');
+                    }
+                }
+
+                const loginRes = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!loginRes.ok) {
+                    const err = await loginRes.json();
+                    throw new Error(err.detail || 'Login failed');
+                }
+
+                const data = await loginRes.json();
+                authToken = data.access_token;
+                localStorage.setItem('ecom_token', authToken);
+
+                // Extract role and user ID directly from the signed JWT payload
+                const decoded = parseJwt(authToken);
+                currentUser = {
+                    id: decoded?.id || 1,
+                    name: name || email.split('@')[0],
+                    email: email,
+                    role: decoded?.role || 'customer'
+                };
+                localStorage.setItem('ecom_user', JSON.stringify(currentUser));
+
+                updateAuthUI();
+                closeAuthModal();
+                showStatus('Successfully authenticated!', 'success');
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('ecom_token');
+            localStorage.removeItem('ecom_user');
+            resetAuthForm();
+            updateAuthUI();
+            showStatus('Signed out successfully.', 'info');
+        }
+
+        // --- Admin Product Management ---
+        function openAdminModal() {
+            switchAdminTab('create');
+            document.getElementById('adminModal').classList.add('open');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('open');
+        }
+
+        function switchAdminTab(tab) {
+            const createForm = document.getElementById('createProductForm');
+            const lowStockContainer = document.getElementById('lowStockContainer');
+            const btnCreate = document.getElementById('adminTabCreate');
+            const btnStock = document.getElementById('adminTabStock');
+
+            if (tab === 'create') {
+                createForm.classList.remove('hidden');
+                lowStockContainer.classList.add('hidden');
+                btnCreate.className = 'mode-btn active';
+                btnStock.className = 'mode-btn';
+            } else {
+                createForm.classList.add('hidden');
+                lowStockContainer.classList.remove('hidden');
+                btnStock.className = 'mode-btn active';
+                btnCreate.className = 'mode-btn';
+            }
+        }
+
+        async function handleCreateProduct(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('newProdName').value,
+                description: document.getElementById('newProdDesc').value,
+                category: document.getElementById('newProdCategory').value,
+                price_in_cents: parseInt(document.getElementById('newProdPrice').value),
+                quantity: parseInt(document.getElementById('newProdQty').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'Failed to create product');
+                }
+
+                document.getElementById('createProductForm').reset();
+                showStatus('Product created successfully!', 'success');
+                closeAdminModal();
+                await fetchProducts();
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+            }
+        }
+
+        async function loadLowStockProducts() {
+            switchAdminTab('stock');
+            const listEl = document.getElementById('lowStockList');
+            listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--text-muted);">Loading low stock items...</p>`;
+
+            try {
+                const response = await fetch(`${API_BASE}/products/low-stock?threshold=5`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!response.ok) throw new Error('Failed to fetch low stock alerts');
+
+                const items = await response.json();
+                if (!items || items.length === 0) {
+                    listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--accent-success);">No low stock items found. Inventory levels are healthy.</p>`;
+                    return;
+                }
+
+                listEl.innerHTML = items.map(p => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 0.5rem;">
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.875rem;">${escapeHtml(p.name)}</div>
+                            <div style="font-size: 0.75rem; color: var(--accent-danger);">Remaining Stock: <strong>${p.quantity}</strong></div>
+                        </div>
+                        <span class="stock-badge out-stock">Low Stock</span>
+                    </div>
+                `).join('');
+            } catch (err) {
+                listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--accent-danger);">${err.message}</p>`;
+            }
+        }
+
+        // --- Storefront Mode & Fetching ---
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('modeApiBtn').className = mode === 'api' ? 'mode-btn active' : 'mode-btn';
+            document.getElementById('modeMockBtn').className = mode === 'mock' ? 'mode-btn active' : 'mode-btn';
+            document.getElementById('footerConnectionMode').textContent = mode === 'api' ? `Live API (${API_BASE})` : 'Mock Data';
+            fetchProducts();
+        }
+
+        function showStatus(msg, type = 'info') {
+            const banner = document.getElementById('statusBanner');
+            const messageEl = document.getElementById('statusMessage');
+            messageEl.textContent = msg;
+            banner.classList.remove('hidden');
+        }
+
+        function dismissBanner() {
+            document.getElementById('statusBanner').classList.add('hidden');
+        }
+
+        async function fetchProducts() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            refreshIcon.classList.add('fa-spin');
+
+            if (currentMode === 'mock') {
+                setTimeout(() => {
+                    products = [...MOCK_PRODUCTS];
+                    renderProducts(products);
+                    refreshIcon.classList.remove('fa-spin');
+                }, 300);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/products`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                products = await response.json();
+                renderProducts(products);
+                showStatus("Catalog successfully synced with backend API.", "success");
+            } catch (err) {
+                showStatus(`Could not reach ${API_BASE}/products. Falling back to mock data.`, "error");
+                products = [...MOCK_PRODUCTS];
+                renderProducts(products);
+            } finally {
+                refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            if (!items || items.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">No products found.</p>`;
+                return;
+            }
+
+            grid.innerHTML = items.map(p => {
+                const outOfStock = p.quantity <= 0;
+                const formattedPrice = (p.price_in_cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                return `
+                    <div class="product-card">
+                        <div>
+                            <div class="product-meta">
+                                <span class="stock-badge ${outOfStock ? 'out-stock' : 'in-stock'}">
+                                    ${outOfStock ? 'Out of Stock' : `${p.quantity} in stock`}
+                                </span>
+                                <span class="product-id">ID: ${p.id}</span>
+                            </div>
+                            <h3 class="product-title">${escapeHtml(p.name)}</h3>
+                            <div class="product-price">${formattedPrice}</div>
+                        </div>
+                        <button class="btn-primary" onclick="addToCart(${p.id})" ${outOfStock ? 'disabled' : ''}>
+                            <i class="fa-solid fa-cart-plus"></i> ${outOfStock ? 'Unavailable' : 'Add to Bag'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // --- Cart Actions ---
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            if (!product || product.quantity <= 0) return;
+
+            const existing = cart.find(item => item.product.id === id);
+            if (existing) {
+                if (existing.quantity < product.quantity) {
+                    existing.quantity++;
+                } else {
+                    alert('Max available stock reached');
+                    return;
+                }
+            } else {
+                cart.push({ product, quantity: 1 });
+            }
+            updateCartUI();
+            toggleCart(true);
+        }
+
+        function updateCartQuantity(id, delta) {
+            const item = cart.find(i => i.product.id === id);
+            if (!item) return;
+            const newQty = item.quantity + delta;
+            if (newQty <= 0) {
+                cart = cart.filter(i => i.product.id !== id);
+            } else if (newQty <= item.product.quantity) {
+                item.quantity = newQty;
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const countBadge = document.getElementById('cartCountBadge');
+            const subtotalEl = document.getElementById('cartSubtotal');
+            const container = document.getElementById('cartItemsContainer');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalCents = cart.reduce((sum, item) => sum + (item.product.price_in_cents * item.quantity), 0);
+
+            countBadge.textContent = totalCount;
+            subtotalEl.textContent = (totalCents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            checkoutBtn.disabled = cart.length === 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">Your bag is empty.</p>`;
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.875rem;">${escapeHtml(item.product.name)}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">$${(item.product.price_in_cents / 100).toFixed(2)} each</div>
+                    </div>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="updateCartQuantity(${item.product.id}, -1)"><i class="fa-solid fa-minus"></i></button>
+                        <span style="font-size: 0.8125rem; font-weight: 600; width: 1.25rem; text-align: center;">${item.quantity}</span>
+                        <button class="qty-btn" onclick="updateCartQuantity(${item.product.id}, 1)"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCart(open) {
+            const drawer = document.getElementById('cartDrawer');
+            const backdrop = document.getElementById('drawerBackdrop');
+            if (open) {
+                backdrop.classList.add('open');
+                drawer.classList.add('open');
+            } else {
+                backdrop.classList.remove('open');
+                drawer.classList.remove('open');
+            }
+        }
+
+        // --- Checkout & Order Submission ---
+        function openCheckoutModal() {
+            toggleCart(false);
+            updatePayloadPreview();
+            document.getElementById('checkoutModal').classList.add('open');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.remove('open');
+        }
+
+        function updatePayloadPreview() {
+            const customerId = parseInt(document.getElementById('customerIdInput').value) || 1;
+            const payload = {
+                customerId: customerId,
+                items: cart.map(i => ({
+                    productId: i.product.id,
+                    quantity: i.quantity
+                }))
+            };
+            document.getElementById('payloadPreview').textContent = JSON.stringify(payload, null, 2);
+        }
+
+        async function submitOrder(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitOrderBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            const customerId = parseInt(document.getElementById('customerIdInput').value);
+            const payload = {
+                customerId: customerId,
+                items: cart.map(i => ({
+                    productId: i.product.id,
+                    quantity: i.quantity
+                }))
+            };
+
+            if (currentMode === 'mock') {
+                setTimeout(() => {
+                    handleOrderSuccess({
+                        id: Math.floor(Math.random() * 90000) + 10000,
+                        created_at: new Date().toISOString()
+                    });
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Order';
+                }, 500);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/order`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(errText || `Server responded with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                handleOrderSuccess(data);
+                await fetchProducts();
+            } catch (err) {
+                alert(`Order Failed: ${err.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Order';
+            }
+        }
+
+        function handleOrderSuccess(order) {
+            closeCheckoutModal();
+            cart = [];
+            updateCartUI();
+
+            document.getElementById('successOrderId').textContent = `#${order.id || order.order_id || '---'}`;
+            document.getElementById('successOrderTime').textContent = new Date(order.created_at || Date.now()).toLocaleString();
+            document.getElementById('successModal').classList.add('open');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('open');
+        }
+    </script>
+</body>
+</html>
