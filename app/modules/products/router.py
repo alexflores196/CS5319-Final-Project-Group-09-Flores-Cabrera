@@ -37,6 +37,7 @@ async def create_product(
     new_product = ProductModel(
         name=payload.name,
         description=payload.description,
+        image_url=payload.image_url,
         category=payload.category,
         price_in_cents=payload.price_in_cents,
         quantity=payload.quantity,
