@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcomStore &mdash; Developer API Client</title>
-    <!-- Google Fonts for crisp typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -260,6 +258,15 @@
             margin-bottom: 0.75rem;
         }
 
+        .product-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: contain;
+            background: var(--bg-color);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
         .stock-badge {
             font-size: 0.75rem;
             font-weight: 600;
@@ -323,7 +330,6 @@
             cursor: not-allowed;
         }
 
-        /* Slide-over Cart Drawer */
         .drawer-backdrop {
             position: fixed;
             inset: 0;
@@ -419,7 +425,6 @@
             color: var(--text-main);
         }
 
-        /* Modals */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -511,12 +516,11 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header>
         <div class="container header-inner">
             <a href="#" class="brand">
                 <div class="brand-icon"><i class="fa-solid fa-cube"></i></div>
-                <span>EcomStore API</span>
+                <span>IBuyTech Shop</span>
             </a>
 
             <div class="nav-controls">
@@ -529,12 +533,10 @@
                     <i id="refreshIcon" class="fa-solid fa-rotate-right"></i>
                 </button>
 
-                <!-- Admin Dashboard Trigger (Visible only if logged-in user is admin) -->
                 <button id="adminNavBtn" onclick="openAdminModal()" class="mode-btn hidden" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-weight: 600; padding: 0.4rem 0.75rem; border-radius: 0.5rem;">
                     <i class="fa-solid fa-shield-halved" style="margin-right: 0.25rem;"></i> Admin Panel
                 </button>
 
-                <!-- Auth Controls -->
                 <div id="authNavControls" style="display: flex; align-items: center;">
                     <button id="authOpenBtn" onclick="openAuthModal('login')" class="mode-btn" style="border: 1px solid var(--border-color); padding: 0.4rem 0.75rem; border-radius: 0.5rem; font-weight: 600;">
                         <i class="fa-solid fa-user" style="margin-right: 0.25rem;"></i> Sign In
@@ -554,9 +556,7 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container">
-        <!-- Status Notification Banner -->
         <div id="statusBanner" class="banner hidden">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <i id="statusIcon" class="fa-solid fa-circle-info"></i>
@@ -568,7 +568,7 @@
         <div class="catalog-header">
             <div>
                 <h1 style="font-size: 1.75rem; font-weight: 700; letter-spacing: -0.025em;">Product Catalog</h1>
-                <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Browse available items synced directly with PostgreSQL backend.</p>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Browse available items.</p>
             </div>
 
             <div class="search-box">
@@ -577,29 +577,24 @@
             </div>
         </div>
 
-        <!-- Product Grid -->
         <div id="productGrid" class="product-grid">
             <!-- Populated dynamically -->
         </div>
     </main>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             Connected Source: <span id="footerConnectionMode" style="font-weight: 600; color: var(--text-main);">Live API (http://localhost:8080)</span>
         </div>
     </footer>
 
-    <!-- Cart Slide-over Drawer -->
     <div id="drawerBackdrop" class="drawer-backdrop" onclick="toggleCart(false)"></div>
     <aside id="cartDrawer" class="cart-drawer">
         <div class="drawer-header">
             <h3 style="font-weight: 700; font-size: 1.125rem;">Shopping Bag</h3>
             <button class="icon-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div id="cartItemsContainer" class="drawer-body">
-            <!-- Cart items populated dynamically -->
-        </div>
+        <div id="cartItemsContainer" class="drawer-body"></div>
         <div class="drawer-footer">
             <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-weight: 600;">
                 <span>Subtotal</span>
@@ -609,7 +604,6 @@
         </div>
     </aside>
 
-    <!-- Authentication Modal (Login / Register) -->
     <div id="authModal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
@@ -646,7 +640,6 @@
         </div>
     </div>
 
-    <!-- Admin Product Management Modal -->
     <div id="adminModal" class="modal-overlay">
         <div class="modal-card" style="max-width: 650px;">
             <div class="modal-header">
@@ -654,13 +647,12 @@
                 <button class="icon-btn" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
-                <!-- Tab switcher inside modal -->
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: var(--bg-color); padding: 0.25rem; border-radius: 0.5rem;">
-                    <button id="adminTabCreate" class="mode-btn active" style="flex:1;" onclick="switchAdminTab('create')">Add New Product</button>
-                    <button id="adminTabStock" class="mode-btn" style="flex:1;" onclick="loadLowStockProducts()">Low Stock Alerts</button>
+                    <button id="adminTabCreate" class="mode-btn active" style="flex:1;" onclick="switchAdminTab('create')">Add Product</button>
+                    <button id="adminTabManage" class="mode-btn" style="flex:1;" onclick="loadManageProducts()">Manage Products</button>
+                    <button id="adminTabStock" class="mode-btn" style="flex:1;" onclick="loadLowStockProducts()">Low Stock</button>
                 </div>
 
-                <!-- Create Product Form -->
                 <form id="createProductForm" onsubmit="handleCreateProduct(event)">
                     <div class="form-group">
                         <label class="form-label" for="newProdName">Product Name</label>
@@ -669,6 +661,10 @@
                     <div class="form-group">
                         <label class="form-label" for="newProdDesc">Description</label>
                         <input type="text" id="newProdDesc" class="form-input" placeholder="Hot-swappable switches...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newProdImageUrl">Image path</label>
+                        <input type="text" id="newProdImageUrl" class="form-input" placeholder="/static/images/products/wireless-headphones.jpg">
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
@@ -687,7 +683,11 @@
                     <button type="submit" class="btn-primary">Create Product</button>
                 </form>
 
-                <!-- Low Stock Container (Hidden by default) -->
+                <div id="manageProductsContainer" class="hidden">
+                    <p style="font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 0.75rem;">Select a product to edit.</p>
+                    <div id="manageProductsList" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                </div>
+
                 <div id="lowStockContainer" class="hidden" style="display: flex; flex-direction: column; gap: 0.75rem;">
                     <p style="font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 0.5rem;">Products with inventory level &le; 5:</p>
                     <div id="lowStockList" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
@@ -696,7 +696,50 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
+    <div id="editProductModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3 style="font-weight: 700;">Edit Product</h3>
+                <button class="icon-btn" type="button" onclick="closeEditProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p id="editProductError" class="hidden" style="color: var(--accent-danger); font-size: 0.8125rem; margin-bottom: 1rem;"></p>
+                <form id="editProductForm" onsubmit="handleUpdateProduct(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="editProdName">Product Name</label>
+                        <input type="text" id="editProdName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editProdDesc">Description</label>
+                        <input type="text" id="editProdDesc" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editProdImageUrl">Image path</label>
+                        <input type="text" id="editProdImageUrl" class="form-input" placeholder="/static/images/products/your-image.jpg">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="editProdCategory">Category</label>
+                            <input type="text" id="editProdCategory" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editProdPrice">Price (in cents)</label>
+                            <input type="number" id="editProdPrice" class="form-input" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="editProdQty">Inventory Quantity</label>
+                        <input type="number" id="editProdQty" class="form-input" min="0" required>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                        <button type="button" class="mode-btn" style="border: 1px solid var(--border-color); padding: 0.65rem 1rem;" onclick="closeEditProductModal()">Cancel</button>
+                        <button type="submit" id="saveProductBtn" class="btn-primary" style="width: auto; padding: 0.65rem 1.25rem;">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="checkoutModal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
@@ -724,7 +767,6 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
     <div id="successModal" class="modal-overlay">
         <div class="modal-card" style="text-align: center; padding: 2rem;">
             <div style="width: 3rem; height: 3rem; background: #ecfdf5; color: var(--accent-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.25rem;">
@@ -742,17 +784,17 @@
         </div>
     </div>
 
-    <!-- Application Script -->
     <script>
         const API_BASE = 'http://localhost:8080';
         let currentMode = 'api';
         let products = [];
         let cart = [];
+        let adminProducts = [];
+        let editingProductId = null;
 
-        // Auth State Management
         let authToken = localStorage.getItem('ecom_token') || null;
         let currentUser = JSON.parse(localStorage.getItem('ecom_user')) || null;
-        let authMode = 'login'; // 'login' or 'register'
+        let authMode = 'login';
 
         const MOCK_PRODUCTS = [
             { id: 1, name: "Mechanical Gaming Keyboard", price_in_cents: 8999, quantity: 15 },
@@ -767,7 +809,6 @@
             updateAuthUI();
         });
 
-        // --- Helper: Decode JWT Payload ---
         function parseJwt(token) {
             try {
                 const base64Url = token.split('.')[1];
@@ -781,7 +822,6 @@
             }
         }
 
-        // --- Authentication UI & Logic ---
         function resetAuthForm() {
             document.getElementById('authName').value = '';
             document.getElementById('authEmail').value = '';
@@ -801,7 +841,6 @@
                 userProfileDisplay.style.display = 'flex';
                 userWelcomeText.textContent = `Hi, ${currentUser.name} (${currentUser.role})`;
 
-                // Show Admin Panel button if user role is admin
                 if (currentUser.role === 'admin') {
                     adminNavBtn.classList.remove('hidden');
                 } else {
@@ -890,7 +929,6 @@
                 authToken = data.access_token;
                 localStorage.setItem('ecom_token', authToken);
 
-                // Extract role and user ID directly from the signed JWT payload
                 const decoded = parseJwt(authToken);
                 currentUser = {
                     id: decoded?.id || 1,
@@ -919,7 +957,6 @@
             showStatus('Signed out successfully.', 'info');
         }
 
-        // --- Admin Product Management ---
         function openAdminModal() {
             switchAdminTab('create');
             document.getElementById('adminModal').classList.add('open');
@@ -931,21 +968,20 @@
 
         function switchAdminTab(tab) {
             const createForm = document.getElementById('createProductForm');
+            const manageContainer = document.getElementById('manageProductsContainer');
             const lowStockContainer = document.getElementById('lowStockContainer');
-            const btnCreate = document.getElementById('adminTabCreate');
-            const btnStock = document.getElementById('adminTabStock');
 
-            if (tab === 'create') {
-                createForm.classList.remove('hidden');
-                lowStockContainer.classList.add('hidden');
-                btnCreate.className = 'mode-btn active';
-                btnStock.className = 'mode-btn';
-            } else {
-                createForm.classList.add('hidden');
-                lowStockContainer.classList.remove('hidden');
-                btnStock.className = 'mode-btn active';
-                btnCreate.className = 'mode-btn';
-            }
+            const tabCreate = document.getElementById('adminTabCreate');
+            const tabManage = document.getElementById('adminTabManage');
+            const tabStock = document.getElementById('adminTabStock');
+
+            createForm.classList.toggle('hidden', tab !== 'create');
+            manageContainer.classList.toggle('hidden', tab !== 'manage');
+            lowStockContainer.classList.toggle('hidden', tab !== 'stock');
+
+            tabCreate.className = tab === 'create' ? 'mode-btn active' : 'mode-btn';
+            tabManage.className = tab === 'manage' ? 'mode-btn active' : 'mode-btn';
+            tabStock.className = tab === 'stock' ? 'mode-btn active' : 'mode-btn';
         }
 
         async function handleCreateProduct(e) {
@@ -953,9 +989,10 @@
             const payload = {
                 name: document.getElementById('newProdName').value,
                 description: document.getElementById('newProdDesc').value,
+                image_url: document.getElementById('newProdImageUrl').value.trim() || null,
                 category: document.getElementById('newProdCategory').value,
-                price_in_cents: parseInt(document.getElementById('newProdPrice').value),
-                quantity: parseInt(document.getElementById('newProdQty').value)
+                price_in_cents: parseInt(document.getElementById('newProdPrice').value, 10),
+                quantity: parseInt(document.getElementById('newProdQty').value, 10)
             };
 
             try {
@@ -979,6 +1016,115 @@
                 await fetchProducts();
             } catch (err) {
                 alert(`Error: ${err.message}`);
+            }
+        }
+
+        async function loadManageProducts() {
+            switchAdminTab('manage');
+            const listEl = document.getElementById('manageProductsList');
+            listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--text-muted);">Loading products...</p>`;
+
+            try {
+                const response = await fetch(`${API_BASE}/products`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'Failed to load products');
+                }
+
+                adminProducts = await response.json();
+
+                if (adminProducts.length === 0) {
+                    listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--text-muted);">No active products found.</p>`;
+                    return;
+                }
+
+                listEl.innerHTML = adminProducts.map(p => `
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 0.5rem;">
+                        <div style="min-width: 0;">
+                            <div style="font-weight: 600; font-size: 0.875rem;">${escapeHtml(p.name)}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                ID: ${p.id} &middot; Stock: ${p.quantity} &middot; $${(p.price_in_cents / 100).toFixed(2)}
+                            </div>
+                        </div>
+                        <button type="button" class="mode-btn" style="border: 1px solid var(--border-color); background: white; white-space: nowrap;" onclick="openEditProductModal(${Number(p.id)})">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--accent-danger);">${escapeHtml(err.message)}</p>`;
+            }
+        }
+
+        function openEditProductModal(productId) {
+            const product = adminProducts.find(p => Number(p.id) === Number(productId));
+            if (!product) {
+                showStatus('Product not found in the loaded list.', 'error');
+                return;
+            }
+
+            editingProductId = product.id;
+            document.getElementById('editProductError').classList.add('hidden');
+            document.getElementById('editProdName').value = product.name || '';
+            document.getElementById('editProdDesc').value = product.description || '';
+            document.getElementById('editProdImageUrl').value = product.image_url || '';
+            document.getElementById('editProdCategory').value = product.category || '';
+            document.getElementById('editProdPrice').value = product.price_in_cents ?? 0;
+            document.getElementById('editProdQty').value = product.quantity ?? 0;
+            document.getElementById('editProductModal').classList.add('open');
+        }
+
+        function closeEditProductModal() {
+            document.getElementById('editProductModal').classList.remove('open');
+            editingProductId = null;
+        }
+
+        async function handleUpdateProduct(e) {
+            e.preventDefault();
+            if (editingProductId === null) return;
+
+            const errorEl = document.getElementById('editProductError');
+            const saveButton = document.getElementById('saveProductBtn');
+            errorEl.classList.add('hidden');
+            saveButton.disabled = true;
+            saveButton.textContent = 'Saving...';
+
+            const payload = {
+                name: document.getElementById('editProdName').value.trim(),
+                description: document.getElementById('editProdDesc').value.trim(),
+                image_url: document.getElementById('editProdImageUrl').value.trim() || null,
+                category: document.getElementById('editProdCategory').value.trim(),
+                price_in_cents: parseInt(document.getElementById('editProdPrice').value, 10),
+                quantity: parseInt(document.getElementById('editProdQty').value, 10)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/products/${editingProductId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'Failed to update product');
+                }
+
+                closeEditProductModal();
+                showStatus('Product updated successfully.', 'success');
+                await fetchProducts();
+                await loadManageProducts();
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.classList.remove('hidden');
+            } finally {
+                saveButton.disabled = false;
+                saveButton.textContent = 'Save Changes';
             }
         }
 
@@ -1009,11 +1155,10 @@
                     </div>
                 `).join('');
             } catch (err) {
-                listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--accent-danger);">${err.message}</p>`;
+                listEl.innerHTML = `<p style="font-size: 0.875rem; color: var(--accent-danger);">${escapeHtml(err.message)}</p>`;
             }
         }
 
-        // --- Storefront Mode & Fetching ---
         function setMode(mode) {
             currentMode = mode;
             document.getElementById('modeApiBtn').className = mode === 'api' ? 'mode-btn active' : 'mode-btn';
@@ -1051,9 +1196,9 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 products = await response.json();
                 renderProducts(products);
-                showStatus("Catalog successfully synced with backend API.", "success");
+                showStatus('Catalog successfully synced with backend API.', 'success');
             } catch (err) {
-                showStatus(`Could not reach ${API_BASE}/products. Falling back to mock data.`, "error");
+                showStatus(`Could not reach ${API_BASE}/products. Falling back to mock data.`, 'error');
                 products = [...MOCK_PRODUCTS];
                 renderProducts(products);
             } finally {
@@ -1076,7 +1221,16 @@
 
             grid.innerHTML = items.map(p => {
                 const outOfStock = p.quantity <= 0;
-                const formattedPrice = (p.price_in_cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                const formattedPrice = (p.price_in_cents / 100).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                });
+                const imageUrl =
+                    typeof p.image_url === 'string' &&
+                    p.image_url.startsWith('/static/images/products/')
+                        ? p.image_url
+                        : null;
+
                 return `
                     <div class="product-card">
                         <div>
@@ -1086,10 +1240,19 @@
                                 </span>
                                 <span class="product-id">ID: ${p.id}</span>
                             </div>
+                            ${imageUrl ? `
+                                <img
+                                    class="product-image"
+                                    src="${escapeHtml(imageUrl)}"
+                                    alt="${escapeHtml(p.name)}"
+                                    loading="lazy"
+                                    onerror="this.remove()"
+                                >
+                            ` : ''}
                             <h3 class="product-title">${escapeHtml(p.name)}</h3>
                             <div class="product-price">${formattedPrice}</div>
                         </div>
-                        <button class="btn-primary" onclick="addToCart(${p.id})" ${outOfStock ? 'disabled' : ''}>
+                        <button class="btn-primary" onclick="addToCart(${Number(p.id)})" ${outOfStock ? 'disabled' : ''}>
                             <i class="fa-solid fa-cart-plus"></i> ${outOfStock ? 'Unavailable' : 'Add to Bag'}
                         </button>
                     </div>
@@ -1098,15 +1261,18 @@
         }
 
         function escapeHtml(str) {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
 
-        // --- Cart Actions ---
         function addToCart(id) {
-            const product = products.find(p => p.id === id);
+            const product = products.find(p => Number(p.id) === Number(id));
             if (!product || product.quantity <= 0) return;
 
-            const existing = cart.find(item => item.product.id === id);
+            const existing = cart.find(item => Number(item.product.id) === Number(id));
             if (existing) {
                 if (existing.quantity < product.quantity) {
                     existing.quantity++;
@@ -1122,11 +1288,12 @@
         }
 
         function updateCartQuantity(id, delta) {
-            const item = cart.find(i => i.product.id === id);
+            const item = cart.find(i => Number(i.product.id) === Number(id));
             if (!item) return;
+
             const newQty = item.quantity + delta;
             if (newQty <= 0) {
-                cart = cart.filter(i => i.product.id !== id);
+                cart = cart.filter(i => Number(i.product.id) !== Number(id));
             } else if (newQty <= item.product.quantity) {
                 item.quantity = newQty;
             }
@@ -1140,10 +1307,13 @@
             const checkoutBtn = document.getElementById('checkoutBtn');
 
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const totalCents = cart.reduce((sum, item) => sum + (item.product.price_in_cents * item.quantity), 0);
+            const totalCents = cart.reduce((sum, item) => sum + item.product.price_in_cents * item.quantity, 0);
 
             countBadge.textContent = totalCount;
-            subtotalEl.textContent = (totalCents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            subtotalEl.textContent = (totalCents / 100).toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            });
             checkoutBtn.disabled = cart.length === 0;
 
             if (cart.length === 0) {
@@ -1158,9 +1328,9 @@
                         <div style="font-size: 0.75rem; color: var(--text-muted);">$${(item.product.price_in_cents / 100).toFixed(2)} each</div>
                     </div>
                     <div class="qty-controls">
-                        <button class="qty-btn" onclick="updateCartQuantity(${item.product.id}, -1)"><i class="fa-solid fa-minus"></i></button>
+                        <button class="qty-btn" onclick="updateCartQuantity(${Number(item.product.id)}, -1)"><i class="fa-solid fa-minus"></i></button>
                         <span style="font-size: 0.8125rem; font-weight: 600; width: 1.25rem; text-align: center;">${item.quantity}</span>
-                        <button class="qty-btn" onclick="updateCartQuantity(${item.product.id}, 1)"><i class="fa-solid fa-plus"></i></button>
+                        <button class="qty-btn" onclick="updateCartQuantity(${Number(item.product.id)}, 1)"><i class="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -1178,7 +1348,6 @@
             }
         }
 
-        // --- Checkout & Order Submission ---
         function openCheckoutModal() {
             toggleCart(false);
             updatePayloadPreview();
@@ -1190,9 +1359,9 @@
         }
 
         function updatePayloadPreview() {
-            const customerId = parseInt(document.getElementById('customerIdInput').value) || 1;
+            const customerId = parseInt(document.getElementById('customerIdInput').value, 10) || 1;
             const payload = {
-                customerId: customerId,
+                customerId,
                 items: cart.map(i => ({
                     productId: i.product.id,
                     quantity: i.quantity
@@ -1207,9 +1376,9 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
 
-            const customerId = parseInt(document.getElementById('customerIdInput').value);
+            const customerId = parseInt(document.getElementById('customerIdInput').value, 10);
             const payload = {
-                customerId: customerId,
+                customerId,
                 items: cart.map(i => ({
                     productId: i.product.id,
                     quantity: i.quantity

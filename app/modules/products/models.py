@@ -15,6 +15,7 @@ class ProductModel(Base):
     quantity = Column(Integer, nullable=False, default=0)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    image_url = Column(String(1024), nullable=True)
 
 # Pydantic Schemas
 class ProductResponse(BaseModel):
@@ -26,6 +27,7 @@ class ProductResponse(BaseModel):
     quantity: int
     is_active: bool
     created_at: datetime
+    image_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -36,6 +38,7 @@ class ProductCreate(BaseModel):
     category: Optional[str] = "General"
     price_in_cents: int
     quantity: int
+    image_url: Optional[str] = None
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -44,3 +47,4 @@ class ProductUpdate(BaseModel):
     price_in_cents: Optional[int] = None
     quantity: Optional[int] = None
     is_active: Optional[bool] = None
+    image_url: Optional[str] = None
