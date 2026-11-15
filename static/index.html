@@ -260,6 +260,15 @@
             margin-bottom: 0.75rem;
         }
 
+        .product-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: contain;
+            background: var(--bg-color);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
         .stock-badge {
             font-size: 0.75rem;
             font-weight: 600;
@@ -670,6 +679,10 @@
                         <label class="form-label" for="newProdDesc">Description</label>
                         <input type="text" id="newProdDesc" class="form-input" placeholder="Hot-swappable switches...">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newProdImageUrl">Image path</label>
+                        <input type="text" id="newProdImageUrl" class="form-input" placeholder="/static/images/products/wireless-headphones.jpg">
+                    </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
                             <label class="form-label" for="newProdCategory">Category</label>
@@ -953,6 +966,7 @@
             const payload = {
                 name: document.getElementById('newProdName').value,
                 description: document.getElementById('newProdDesc').value,
+                image_url: document.getElementById('newProdImageUrl').value.trim() || null,
                 category: document.getElementById('newProdCategory').value,
                 price_in_cents: parseInt(document.getElementById('newProdPrice').value),
                 quantity: parseInt(document.getElementById('newProdQty').value)
@@ -1077,6 +1091,12 @@
             grid.innerHTML = items.map(p => {
                 const outOfStock = p.quantity <= 0;
                 const formattedPrice = (p.price_in_cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                const imageUrl =
+                    typeof p.image_url === 'string' &&
+                    p.image_url.startsWith('/static/images/products/')
+                        ? p.image_url
+                        : null;
+
                 return `
                     <div class="product-card">
                         <div>
@@ -1086,6 +1106,15 @@
                                 </span>
                                 <span class="product-id">ID: ${p.id}</span>
                             </div>
+                            ${imageUrl ? `
+                                <img
+                                    class="product-image"
+                                    src="${escapeHtml(imageUrl)}"
+                                    alt="${escapeHtml(p.name)}"
+                                    loading="lazy"
+                                    onerror="this.remove()"
+                                >
+                            ` : ''}
                             <h3 class="product-title">${escapeHtml(p.name)}</h3>
                             <div class="product-price">${formattedPrice}</div>
                         </div>

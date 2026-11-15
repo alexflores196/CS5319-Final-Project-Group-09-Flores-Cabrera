@@ -36,7 +36,8 @@ async def seed_data():
                     category="Audio",
                     price_in_cents=14999,
                     quantity=15,
-                    is_active=True
+                    is_active=True,
+                    image_url="/static/images/products/wireless-headphones.jpg"
                 ),
                 ProductModel(
                     name="Ergonomic Mechanical Keyboard",
@@ -44,7 +45,9 @@ async def seed_data():
                     category="Peripherals",
                     price_in_cents=12950,
                     quantity=8,
-                    is_active=True
+                    is_active=True,
+                    image_url="/static/images/products/wireless-keyboard.jpg"
+
                 ),
                 ProductModel(
                     name="Ultra-Wide Curved Monitor 34\"",
@@ -52,7 +55,8 @@ async def seed_data():
                     category="Displays",
                     price_in_cents=49999,
                     quantity=4,
-                    is_active=True
+                    is_active=True,
+                    image_url="/static/images/products/curved-monitor.jpg"
                 ),
                 ProductModel(
                     name="Precision Optical Mouse",
@@ -60,7 +64,8 @@ async def seed_data():
                     category="Peripherals",
                     price_in_cents=4500,
                     quantity=25,
-                    is_active=True
+                    is_active=True,
+                    image_url="/static/images/products/optical-mouse.jpg"
                 )
             ]
             db.add_all(sample_products)
