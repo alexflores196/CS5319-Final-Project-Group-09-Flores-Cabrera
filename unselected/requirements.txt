@@ -1,0 +1,15 @@
+# Combined dependencies for running every service and the test suite locally.
+# Each service also has its own requirements.txt used by its Docker image.
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+asyncpg>=0.29.0
+sqlalchemy[asyncio]>=2.0.28
+pydantic>=2.6.4
+pydantic-settings>=2.2.1
+email-validator
+bcrypt
+PyJWT>=2.8.0
+httpx
+pytest
+pytest-asyncio
+aiosqlite
