@@ -38,8 +38,7 @@ directly: the only difference is the **architecture**.
 8. [Architecture designs](#8-architecture-designs)
 9. [Differences between the two architecture designs](#9-differences-between-the-two-architecture-designs)
 10. [Rationale for the final selection](#10-rationale-for-the-final-selection)
-11. [Changes from the project proposal](#11-changes-from-the-project-proposal)
-12. [Additional notes for the grader](#12-additional-notes-for-the-grader)
+11. [Additional notes](#11-additional-notes)
 
 ---
 
@@ -554,34 +553,7 @@ modest traffic, these are acceptable.
 
 ---
 
-## 11. Changes from the project proposal
-
-<!--
-TODO(team): Fill in this section with the details from our submitted proposal.
-Replace each bracketed placeholder below, and delete this comment.
--->
-
-| | Project proposal | Final deliverable |
-|---|---|---|
-| Candidate architecture 1 | **[Style named in proposal]** | Layered (modular) monolith (**selected**) |
-| Candidate architecture 2 | **[Style named in proposal]** | Microservices (unselected) |
-| Selected architecture | **[Proposal's planned selection]** | Layered (modular) monolith |
-
-**What changed and why:**
-
-- **[Change 1, e.g. "Candidate 2 changed from X to microservices"]:**
-  [Rationale, e.g. microservices is the most common real-world alternative to a
-  monolith for e-commerce, so the comparison is more informative to graders and
-  shows a meaningful trade-off around consistency and deployability.]
-- **[Change 2, e.g. "Feature scope changes" such as adding product images,
-  admin product editing, and low-stock reporting]:** [Rationale.]
-- **[Any change in selected architecture]:** [Rationale. If the selection did
-  not change, state: "Our selection did not change from the proposal; building
-  both candidates confirmed it, for the reasons in Section 10."]
-
----
-
-## 12. Additional notes for the grader
+## 11. Additional notes
 
 - **Same API, same frontend.** The four scenario tests in
   `Selected/tests/test_api.py` are copied unchanged into
