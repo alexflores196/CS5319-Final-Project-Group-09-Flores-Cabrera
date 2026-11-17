@@ -1,0 +1,102 @@
+x-postgres-env: &postgres-env
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+x-postgres-healthcheck: &postgres-healthcheck
+  interval: 5s
+  timeout: 5s
+  retries: 10
+  start_period: 5s
+
+x-internal-key: &internal-key
+  INTERNAL_API_KEY: dev-internal-key-change-in-production
+
+services:
+  # --- Databases: one per service (database-per-service pattern) ----------
+  auth-db:
+    image: postgres:16-alpine
+    environment:
+      <<: *postgres-env
+      POSTGRES_DB: auth_db
+    volumes:
+      - auth-data:/var/lib/postgresql/data
+      - ./services/auth_service/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      <<: *postgres-healthcheck
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth_db"]
+
+  product-db:
+    image: postgres:16-alpine
+    environment:
+      <<: *postgres-env
+      POSTGRES_DB: products_db
+    volumes:
+      - product-data:/var/lib/postgresql/data
+      - ./services/product_service/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      <<: *postgres-healthcheck
+      test: ["CMD-SHELL", "pg_isready -U postgres -d products_db"]
+
+  order-db:
+    image: postgres:16-alpine
+    environment:
+      <<: *postgres-env
+      POSTGRES_DB: orders_db
+    volumes:
+      - order-data:/var/lib/postgresql/data
+      - ./services/order_service/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      <<: *postgres-healthcheck
+      test: ["CMD-SHELL", "pg_isready -U postgres -d orders_db"]
+
+  # --- Services ------------------------------------------------------------
+  auth-service:
+    build: ./services/auth_service
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@auth-db:5432/auth_db
+    depends_on:
+      auth-db:
+        condition: service_healthy
+
+  product-service:
+    build: ./services/product_service
+    environment:
+      <<: *internal-key
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@product-db:5432/products_db
+      AUTH_SERVICE_URL: http://auth-service:8001
+    depends_on:
+      product-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+
+  order-service:
+    build: ./services/order_service
+    environment:
+      <<: *internal-key
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@order-db:5432/orders_db
+      PRODUCT_SERVICE_URL: http://product-service:8002
+    depends_on:
+      order-db:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+
+  # --- Single public entry point -------------------------------------------
+  gateway:
+    build: ./services/gateway
+    ports:
+      - "8080:8080"
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8001
+      PRODUCT_SERVICE_URL: http://product-service:8002
+      ORDER_SERVICE_URL: http://order-service:8003
+    depends_on:
+      - auth-service
+      - product-service
+      - order-service
+
+volumes:
+  auth-data:
+  product-data:
+  order-data:
